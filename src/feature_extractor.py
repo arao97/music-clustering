@@ -83,7 +83,7 @@ if __name__ == '__main__':
     main_dir = sys.argv[1]
     
     
-    with open(main_dir+'/song_data.csv', 'w') as csvfile:
+    with open(main_dir+'/song_data.csv', 'w', newline = '') as csvfile:
         fieldnames = feat_names()
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         
