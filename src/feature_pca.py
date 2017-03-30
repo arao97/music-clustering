@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
-import seaborn as sns
 import sys
 import pandas as pd
 from sklearn.decomposition import PCA
@@ -13,6 +12,9 @@ def create_feature_list(feature_name):
 
 def create_numpy_arrays(feature_name):
     return scale(song_data[create_feature_list(feature_name)].values)
+
+def create_scaled_array(feature_name):
+    return scale(song_data[feature_name].values)
 
 def pca_transform(data_frame):
     pca.fit(data_frame)
@@ -28,6 +30,8 @@ main_dir = sys.argv[1]
 
 song_data = pd.read_csv(main_dir + 'song_data.csv', encoding = 'latin-1')
 
+song_loudness = create_scaled_array('loudness')
+song_tempo = create_scaled_array('tempo')
 avg_song_timbre = create_numpy_arrays('avg_timbre')
 var_song_timbre = create_numpy_arrays('var_timbre')
 avg_song_pitches = create_numpy_arrays('avg_pitches')
@@ -41,20 +45,26 @@ avg_song_pitches = pca_transform(avg_song_pitches)
 var_song_pitches = pca_transform(var_song_pitches)
 
 pca_array = [[list(song_data['track_id'])[i],
-                      float(list(avg_song_timbre)[i]), 
-                      float(list(var_song_timbre)[i]), 
-                      float(list(avg_song_pitches)[i]), 
-                      float(list(var_song_pitches)[i])]
-                      for i in range(10000)]
+              float(list(song_loudness)[i]),
+                  float(list(song_tempo)[i]),
+                      list(song_data['time_signature'])[i],
+                          list(song_data['key'])[i],
+                              list(song_data['mode'])[i],
+                                  float(list(avg_song_timbre)[i]),
+                                       float(list(var_song_timbre)[i]),
+                                            float(list(avg_song_pitches)[i]),
+                                                 float(list(var_song_pitches)[i])] for i in range(10000)]
 
 pca_transformed = pd.DataFrame(
-        pca_array, columns = ['track_id', 'avg_timbre', 'var_timbre', 'avg_pitches', 'var_pitches'])
-
-
-
-'''pca_transformed['avg_timbre'] = pd.Series(list(avg_song_timbre), index = pca_transformed.index)
-pca_transformed['var_timbre'] = pd.Series(list(var_song_timbre), index = pca_transformed.index)
-pca_transformed['avg_pitches'] = pd.Series(list(avg_song_pitches), index = pca_transformed.index)
-pca_transformed['var_pitches'] = pd.Series(list(var_song_pitches), index = pca_transformed.index)'''
+        pca_array, columns = ['track_id',
+                              'loudness',
+                              'tempo',
+                              'time_signature',
+                              'key',
+                              'mode',
+                              'avg_timbre',
+                              'var_timbre',
+                              'avg_pitches',
+                              'var_pitches'])
 
 pca_transformed.to_csv(sys.argv[1] + 'song_pca.csv', index = False)
