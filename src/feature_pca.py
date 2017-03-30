@@ -32,28 +32,28 @@ song_data = pd.read_csv(main_dir + 'song_data.csv', encoding = 'latin-1')
 
 song_loudness = create_scaled_array('loudness')
 song_tempo = create_scaled_array('tempo')
+song_time_signature = create_scaled_array('time_signature')
+song_key = create_scaled_array('key')
 avg_song_timbre = create_numpy_arrays('avg_timbre')
 var_song_timbre = create_numpy_arrays('var_timbre')
-avg_song_pitches = create_numpy_arrays('avg_pitches')
-var_song_pitches = create_numpy_arrays('var_pitches')
+'''avg_song_pitches = create_numpy_arrays('avg_pitches')
+var_song_pitches = create_numpy_arrays('var_pitches')'''
 
 pca = PCA(n_components = 1)
 
 avg_song_timbre = pca_transform(avg_song_timbre)
 var_song_timbre = pca_transform(var_song_timbre)
-avg_song_pitches = pca_transform(avg_song_pitches)
-var_song_pitches = pca_transform(var_song_pitches)
+'''avg_song_pitches = pca_transform(avg_song_pitches)
+var_song_pitches = pca_transform(var_song_pitches)'''
 
 pca_array = [[list(song_data['track_id'])[i],
               float(list(song_loudness)[i]),
                   float(list(song_tempo)[i]),
-                      list(song_data['time_signature'])[i],
-                          list(song_data['key'])[i],
+                      float(list(song_time_signature)[i]),
+                          float(list(song_key)[i]),
                               list(song_data['mode'])[i],
                                   float(list(avg_song_timbre)[i]),
-                                       float(list(var_song_timbre)[i]),
-                                            float(list(avg_song_pitches)[i]),
-                                                 float(list(var_song_pitches)[i])] for i in range(10000)]
+                                       float(list(var_song_timbre)[i])] for i in range(10000)]
 
 pca_transformed = pd.DataFrame(
         pca_array, columns = ['track_id',
@@ -63,8 +63,6 @@ pca_transformed = pd.DataFrame(
                               'key',
                               'mode',
                               'avg_timbre',
-                              'var_timbre',
-                              'avg_pitches',
-                              'var_pitches'])
+                              'var_timbre'])
 
 pca_transformed.to_csv(sys.argv[1] + 'song_pca.csv', index = False)

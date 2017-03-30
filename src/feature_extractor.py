@@ -29,10 +29,6 @@ def feat_names():
         res.append('avg_timbre'+str(k))
     for k in range(1,13):
         res.append('var_timbre'+str(k))
-    for k in range(1,13):
-        res.append('avg_pitches'+str(k))
-    for k in range(1,13):
-        res.append('var_pitches'+str(k))
         
     return res
 
@@ -61,15 +57,6 @@ def feat_from_file(path):
     for k in var_timbre:
         feats.append(k)
 
-    #pitches
-    pitches = GETTERS.get_segments_pitches(h5)
-    avg_pitches = np.average(pitches, axis=0)
-    for k in avg_pitches:
-        feats.append(k)
-    var_pitches = np.var(pitches, axis=0)
-    for k in var_pitches:
-        feats.append(k)
-    
     h5.close()
     
     return feats
